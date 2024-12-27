@@ -1,7 +1,8 @@
 import os
 import time
 from kubernetes import client, config
-from github import Github  # Install PyGithub via pip
+from github import Auth
+from github import Github
 
 # Initialize Kubernetes client
 config.load_incluster_config()
@@ -19,7 +20,8 @@ with open(GITHUB_PRIVATE_KEY_PATH, 'r') as f:
 # Generate GitHub installation token (example)
 def get_github_token():
     # Use PyGithub or another method to get the token
-    github = Github(app_id=GITHUB_APP_ID, private_key)
+    auth = Auth.AppAuth(GITHUB_APP_ID, private_key)
+    github = Github(auth)
     installation = github.get_installation_by_id(GITHUB_INSTALLATION_ID)
     token = installation.get_access_token()
     return token.token
