@@ -30,20 +30,24 @@ def get_github_token():
 def update_secret(token):
     secret_name = "videopoint-ghcr-auth"
     secret_namespace = "default"
-#    secret = v1.read_namespaced_secret(secret_name, secret_namespace)
-#    secret.data['password'] = base64.b64encode(token.encode('utf-8')).decode('utf-8')
-#    v1.replace_namespaced_secret(secret_name, secret_namespace, secret)
-    data = {
-            'password': base64.b64encode(token.encode('utf-8')).decode('utf-8'),
-            'username': base64.b64encode(GITHUB_APP_ID.encode('utf-8')).decode('utf-8')
-            }
-    body = client.V1Secret()
-    body.api_version = 'v1'
-    body.data = data
-    body.kind = 'Secret'
-    body.metadata = {'name': secret_name, 'namespace': secret_namespace}
-    body.type = 'Opaque'
-    v1.create_namespaced_secret(secret_namespace, body)
+    #checking current secret
+    try:
+        secret = v1.read_namespaced_secret(secret_name, secret_namespace)
+    else:
+        secret.data['password'] = base64.b64encode(token.encode('utf-8')).decode('utf-8')
+        v1.replace_namespaced_secret(secret_name, secret_namespace, secret)
+    except:
+        data = {
+                'password': base64.b64encode(token.encode('utf-8')).decode('utf-8'),
+                'username': base64.b64encode(GITHUB_APP_ID.encode('utf-8')).decode('utf-8')
+                }
+        body = client.V1Secret()
+        body.api_version = 'v1'
+        body.data = data
+        body.kind = 'Secret'
+        body.metadata = {'name': secret_name, 'namespace': secret_namespace}
+        body.type = 'Opaque'
+        v1.create_namespaced_secret(secret_namespace, body)
 
 print("Fetching new GitHub token...")
 token = get_github_token()
