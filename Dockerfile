@@ -15,6 +15,6 @@ COPY github-token-updater.py /usr/src/app/github-token-updater.py
 WORKDIR /usr/src/app
 
 # Run the script
-CMD ["python", "update_github_token.py"]
+CMD ["python", "github-token-updater.py"]
 
 LABEL org.opencontainers.image.source="https://github.com/ChatPoint/k8s-github-token-updater"
