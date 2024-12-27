@@ -33,9 +33,6 @@ def update_secret(token):
     #checking current secret
     try:
         secret = v1.read_namespaced_secret(secret_name, secret_namespace)
-    else:
-        secret.data['password'] = base64.b64encode(token.encode('utf-8')).decode('utf-8')
-        v1.replace_namespaced_secret(secret_name, secret_namespace, secret)
     except:
         data = {
                 'password': base64.b64encode(token.encode('utf-8')).decode('utf-8'),
@@ -48,6 +45,9 @@ def update_secret(token):
         body.metadata = {'name': secret_name, 'namespace': secret_namespace}
         body.type = 'Opaque'
         v1.create_namespaced_secret(secret_namespace, body)
+    else:
+        secret.data['password'] = base64.b64encode(token.encode('utf-8')).decode('utf-8')
+        v1.replace_namespaced_secret(secret_name, secret_namespace, secret)
 
 print("Fetching new GitHub token...")
 token = get_github_token()
